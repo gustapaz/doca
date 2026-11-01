@@ -1,0 +1,32 @@
+{
+  "assets": [
+    {
+      "file": "public/media/subject.webp",
+      "author": "Giant Asparagus",
+      "source_url": "https://www.pexels.com/photo/aerial-view-of-shipping-containers-at-port-terminal-35627339/",
+      "download_url": "https://images.pexels.com/photos/35627339/pexels-photo-35627339.jpeg",
+      "license": "Pexels License",
+      "license_url": "https://www.pexels.com/license/",
+      "verified_at": "2026-11-01T12:36:09.326083+00:00",
+      "source_sha256": "18397357bc8d8575008232f2d6269a0417afd8246dee96439f1232a38be0c30b",
+      "output_sha256": "3dd7c8c843edbe0a164d495c79f592e78f202375581ddd29271527e6cb62b7c0",
+      "source_dimensions": [
+        4000,
+        3000
+      ],
+      "width": 1200,
+      "height": 900,
+      "bytes": 161318,
+      "transformations": [
+        "EXIF orientation applied",
+        "RGB conversion",
+        "Crop pixel box (120, 150, 1720, 1350) to exclude equipment marks",
+        "long edge resized to maximum 1200px",
+        "EXIF removed",
+        "WebP quality 85, method 6"
+      ],
+      "visual_review": "Inspeção visual da versão final: sem faces identificáveis, marcas visíveis ou dados pessoais legíveis. Recortes usados em Doca, Rubato e Fagulha para excluir marcas de equipamentos.",
+      "usage": "Imagem de ambientação em demonstração de portfólio; não é produto para revenda e não implica endosso."
+    }
+  ]
+}

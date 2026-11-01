@@ -1,0 +1,192 @@
+<div class="terminal">
+  <div class="terminal-head">
+    <span>COMANDO DA OPERAÇÃO</span
+    ><span v-if="d.result"
+      >{{ d.result.placed_count }} / {{ d.result.cargo_count }} VOLUMES A
+      BORDO</span
+    >
+  </div>
+  <div v-if="d.catalog">
+    <div class="command-deck">
+      <label
+        >Prioridade<select
+          aria-label="Prioridade da carga"
+          :value="d.input.policy"
+          @change="a.change('policy',$event.target.value)"
+          :disabled="d.busy"
+        >
+          <option value="balanced">Equilibrar peso</option>
+          <option value="compact">Compactar espaços</option>
+        </select></label
+      ><label
+        >Manifesto<select
+          aria-label="Tipo de carga"
+          :value="d.input.cargo"
+          @change="a.change('cargo',$event.target.value)"
+          :disabled="d.busy"
+        >
+          <option value="coastal">Costeira</option>
+          <option value="mixed">Mista</option>
+          <option value="heavy">Pesada</option>
+        </select></label
+      ><label
+        >Posições <output>{{d.input.bays}}</output
+        ><input
+          aria-label="Posições na base"
+          type="range"
+          min="2"
+          max="6"
+          step="1"
+          :value="d.input.bays"
+          @input="a.change('bays',+$event.target.value)"
+          :disabled="d.busy" /></label
+      ><label
+        >Altura <output>{{d.input.levels}}</output
+        ><input
+          aria-label="Níveis máximos"
+          type="range"
+          min="1"
+          max="4"
+          step="1"
+          :value="d.input.levels"
+          @input="a.change('levels',+$event.target.value)"
+          :disabled="d.busy" /></label
+      ><label
+        >Limite / posição
+        <output>{{(d.input.weight_limit/1000).toFixed(0)}} t</output
+        ><input
+          aria-label="Limite de peso por posição"
+          type="range"
+          min="6000"
+          max="24000"
+          step="1000"
+          :value="d.input.weight_limit"
+          @input="a.change('weight_limit',+$event.target.value)"
+          :disabled="d.busy" /></label
+      ><label
+        >Volumes <output>{{d.input.count}}</output
+        ><input
+          aria-label="Quantidade de volumes"
+          type="range"
+          min="4"
+          max="18"
+          step="1"
+          :value="d.input.count"
+          @input="a.change('count',+$event.target.value)"
+          :disabled="d.busy" /></label
+      ><button class="load-button" @click="a.run()" :disabled="d.busy">
+        {{d.busy?'Calculando…':'Compor a carga ↗'}}
+      </button>
+    </div>
+    <div class="shipping-lines">
+      <button
+        v-for="p in d.catalog.presets"
+        :key="p.name"
+        @click="a.preset(p)"
+        :disabled="d.busy"
+      >
+        {{p.name}} ↗
+      </button>
+    </div>
+  </div>
+  <button v-else @click="a.init()">Tentar abrir o terminal</button>
+  <p class="status" role="status">{{d.error||d.status}}</p>
+  <div class="load-summary" v-if="d.result">
+    <div>
+      <span>MASSA CARREGADA</span
+      ><strong
+        >{{(d.result.loaded_kg/1000).toFixed(1)}}<small> t</small></strong
+      >
+    </div>
+    <div>
+      <span>CENTRO DA CARGA</span
+      ><strong>{{d.result.centroid.toFixed(2)}}<small> posições</small></strong>
+    </div>
+    <div>
+      <span>SEM ESPAÇO SEGURO</span
+      ><strong>{{d.result.unplaced.length}}<small> volumes</small></strong>
+    </div>
+  </div>
+  <section id="manifest" class="manifest" v-if="d.result">
+    <div class="manifest-title">
+      <span>MANIFESTO / REVISÃO CALCULADA</span>
+      <h2>Uma posição<br />para cada volume.</h2>
+      <p v-if="d.result.unplaced.length">
+        Os volumes abaixo sem posição ficaram fora. Altere os limites e
+        recalcule para tentar outra composição.
+      </p>
+      <p v-else>
+        Todos os volumes encontraram uma posição compatível com as regras do
+        modelo.
+      </p>
+    </div>
+    <div class="cargo-table">
+      <table>
+        <caption class="sr-only">
+          Posição, nível e massa dos contêineres
+        </caption>
+        <thead>
+          <tr>
+            <th>Volume</th>
+            <th>Posição</th>
+            <th>Nível</th>
+            <th>Massa</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="box in d.result.placements" :key="box.id">
+            <th>{{box.id}}</th>
+            <td>{{box.x+1}}{{box.span===2?'–'+(box.x+2):''}}</td>
+            <td>{{box.z+1}}</td>
+            <td>{{box.mass_kg/1000}} t</td>
+            <td>{{box.fragile?'Frágil':'Padrão'}}</td>
+          </tr>
+          <tr class="unplaced" v-for="box in d.result.unplaced" :key="box.id">
+            <th>{{box.id}}</th>
+            <td>Fora</td>
+            <td>—</td>
+            <td>{{box.mass_kg/1000}} t</td>
+            <td>{{box.fragile?'Frágil':'Padrão'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="shipment">
+    <div>
+      <span>FIXAR UMA COMPOSIÇÃO</span
+      ><label
+        >Nome da operação<input
+          aria-label="Nome da operação"
+          maxlength="48"
+          :value="d.title"
+          @input="a.title($event.target.value)" /></label
+      ><button @click="a.save()" :disabled="d.busy||!d.result">
+        {{d.current&&d.owns?'Salvar alterações':'Guardar operação'}} ↗</button
+      ><small
+        >Demo sintética. Sete dias de retenção; edição nesta aba. O CSV é da
+        revisão salva.</small
+      >
+    </div>
+    <div class="shipment-tools">
+      <div v-if="d.current">
+        <button @click="a.open(d.current.id)" :disabled="d.busy">
+          Reler do banco</button
+        ><button @click="a.download()" :disabled="d.busy">Exportar CSV ↓</button
+        ><button v-if="d.owns" @click="a.share()" :disabled="d.busy">
+          {{d.current.published?'Encerrar link':'Criar link'}}</button
+        ><button @click="a.fresh()" :disabled="d.busy">Nova operação</button>
+      </div>
+      <a v-if="d.link" :href="d.link" target="_blank" rel="noreferrer"
+        >Abrir operação compartilhada ↗</a
+      >
+      <details>
+        <summary>Operações desta aba ({{d.archive.length}})</summary>
+        <button v-for="x in d.archive" :key="x.id" @click="a.open(x.id)">
+          {{x.title}} ↗
+        </button>
+      </details>
+    </div>
+  </section>
+</div>
