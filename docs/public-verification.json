@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-01",
+  "demo": "https://doca-gustapaz.starrylinen.chatgpt.site",
+  "application_commit": "78ec7b88bf7e65d80af272b22ca2ec94ca47db8f",
+  "automated_tests": 20,
+  "public_smoke": "passed",
+  "browser_flow": "passed",
+  "responsive_widths": [
+    390,
+    768
+  ],
+  "export": {
+    "filename": "doca.csv",
+    "bytes": 263,
+    "sha256": "ad4c9a25e9f6ecd5b723d400ce87be511d93fcca40e3308f0f7b1840c2065a42",
+    "structure": "passed"
+  }
+}
